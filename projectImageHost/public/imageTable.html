@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Film Listings</title>
+</head>
+<body>
+
+
+<div id="tabA" style="display: block">
+    <h1>Film Listings</h1>
+    <table id="filmTable">
+        <tr><th>ImgID</th><th>Filename</th><th>Description</th><th>Date Published</th><th>Action</th></tr>
+
+        <tr id="1">
+            <td>1</td>
+            <td>birds.jpg</td>
+            <td>A flock of birds flying</td>
+            <td>2017-10-04</td>
+            <td>
+                <button onclick="deleteFilm(1)">Delete</button>
+                <button onclick="updateFilm(this); swap('tabA','tabC')">Update</button>
+            </td>
+        </tr>
+
+        <tr id="2">
+            <td>2</td>
+            <td>bears.jpg</td>
+            <td>Bears sitting in a zoo</td>
+            <td>2017-12-06</td>
+            <td>
+                <button onclick="deleteFilm(2)">Delete</button>
+                <button onclick="updateFilm(this); swap('tabA','tabC')">Update</button>
+            </td>
+        </tr>
+    </table>
+    <button onclick="swap('tabA','tabB')">Add Film</button>
+</div>
+
+<div id="tabB" style="display: none">
+    <h1>Add Image</h1>
+    <form action="/images/create" enctype="multipart/form-data" method="POST">
+        Image ID <input type="text" name="id"/><br/>
+        Upload (file)<input type="file" name="fileToUpload"><br/>
+        Description (optional) <input type="text" name="desc"/><br/>
+        Date <input type="date" id="inputDate"><br/>
+    </form>
+    <button onclick="createFilm(); swap('tabB','tabA')">Create </button>
+
+
+</div>
+
+<div style="display: none" id="buttonsTemplate">
+    <button onclick="deleteFilm(this)">Delete</button>
+    <button onclick="updateFilm(this)">Update</button>
+
+</div>
+
+<div id="tabC" style="display: none">
+    <h1>Update Film</h1>
+    <input type="hidden" id="rowId"/>
+    ID <input type="number" id="filmId"><br/>
+    Name <input type="text" id="filmName"><br/>
+    Genre <select name="genre" id="filmGenre">
+    <option value="Comedy">Comedy</option>
+    <option value="Drama">Drama</option>
+    <option value="Action">Action</option>
+    <option value="Horror">Horror</option>
+</select><br/>
+    Date <input type="date" id="filmDate"><br/>
+    <button id="createUpdateButton">Update</button>
+
+</div>
+
+<script>
+    function createFilm() {
+        var idElem = document.getElementById("inputId");
+        var nameElem = document.getElementById("inputName");
+        var genreElem = document.getElementById("inputGenre");
+        var dateElem = document.getElementById("inputDate");
+        var film = {};
+        film.id = idElem.value;
+        film.name = nameElem.value;
+        film.genre = genreElem.value;
+        film.date = dateElem.value;
+        idElem.value = "";
+        nameElem.value = "";
+        genreElem.value = "";
+        dateElem.value = "";
+        insertFilmIntoTable(film);
+    }
+
+    function insertFilmIntoTable(film){
+        console.log(film);
+        var filmTable = document.getElementById("filmTable");
+        var row = filmTable.insertRow(-1);
+        row.setAttribute("id",film.id);
+        var cell = row.insertCell(0);
+        cell.innerHTML = film.id;
+        cell = row.insertCell(1);
+        cell.innerHTML = film.name;
+        cell = row.insertCell(2);
+        cell.innerHTML = film.genre;
+        cell = row.insertCell(3);
+        cell.innerHTML = film.date;
+        cell = row.insertCell(4);
+        cell.innerHTML ="<button onclick=\"deleteFilm("+film.id+")\">Delete</button>\n" +
+            "            <button onclick=\"updateFilm(this)\">Update</button>";
+
+
+
+    }
+
+    function deleteFilm(idNumber){
+        var elem=document.getElementById(idNumber);
+        elem.parentNode.removeChild(elem);
+
+    }
+
+
+    function updateFilm(buttonElem){
+        var row = buttonElem.closest("tr");
+        var rowId = row.getAttribute("id");
+        console.log(rowId);
+
+        var film = {};
+        film.id      = row.getElementsByTagName("td")[0].innerHTML;
+        film.name    = row.getElementsByTagName("td")[1].innerHTML;
+        film.genre   = row.getElementsByTagName("td")[2].innerHTML;
+        film.date    = row.getElementsByTagName("td")[3].innerHTML;
+
+        populateUpdateForm(film, rowId)
+    }
+
+    function populateUpdateForm(film, rowId){
+
+        document.getElementById("rowId").value = rowId;
+        document.getElementById("filmId").value = film.id;
+        document.getElementById("filmName").value = film.name;
+        document.getElementById("filmGenre").value = film.genre;
+        document.getElementById("filmDate").value = film.date;
+        var button = document.getElementById("createUpdateButton");
+        button.innerHTML = "Update";
+        button.onclick = updateButtonClicked;
+
+
+    }
+    function updateButtonClicked(){
+        var rowId = document.getElementById("rowId").value;
+        console.log("update clicked "+rowId);
+        var film = {};
+        film.id      = document.getElementById("filmId").value;
+        film.name    = document.getElementById("filmName").value;
+        film.genre   = document.getElementById("filmGenre").value;
+        film.date    = document.getElementById("filmDate").value;
+
+        document.getElementById("rowId").value = "";
+        document.getElementById("filmId").value = "";
+        document.getElementById("filmName").value = "";
+        document.getElementById("filmGenre").value = "";
+        document.getElementById("filmDate").value = "";
+
+        var button = document.getElementById("createUpdateButton");
+        button.innerHTML = "Update";
+        button.onclick = "swap('tabC','tabA')";
+
+
+        updateRow(film, rowId);
+
+
+    }
+    function updateRow(film, rowId){
+        console.log("about to update row "+rowId);
+        var row = document.getElementById(rowId);
+        row.getElementsByTagName("td")[0].innerHTML = film.id;
+        row.getElementsByTagName("td")[1].innerHTML = film.name;
+        row.getElementsByTagName("td")[2].innerHTML = film.genre;
+        row.getElementsByTagName("td")[3].innerHTML = film.date;
+
+    }
+
+
+    var selectElem = document.getElementById("inputGenre");
+    selectElem.value="comedy";
+
+
+    function swap(hideElemId, showElemId){
+        var hideElem = document.getElementById(hideElemId);
+        var showElem = document.getElementById(showElemId);
+        hideElem.style.display = "none";
+        showElem.style.display = "block";
+        console.log("coming from "+hideElemId + "\n\tgoing to \""+showElemId+"\"");
+    }
+
+</script>
+
+</body>
+
+</html>

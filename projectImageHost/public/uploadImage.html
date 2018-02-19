@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image File</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<body>
+    <div id="result"></div>
+         <form action="/images/create" enctype="multipart/form-data" method="POST">
+             Image ID <input type="text" name="id"/><br/>
+             Upload (file)<input type="file" name="fileToUpload"><br/>
+            Description (optional) <input type="text" name="desc"/><br/>
+        <button id="createImg">Create</button>
+        </form>
+
+<script>
+    $(function(){
+    })
+</script>
+
+</body>
+</html>

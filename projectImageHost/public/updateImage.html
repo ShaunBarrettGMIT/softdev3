@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Image File</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<body>
+<div id="result"></div>
+Image ID <input type="text" name="id" id="imageId"/><br/>
+Upload (file) <input type="text" name="upload"/><br/>
+Description (optional) <input type="text" name="desc"/><br/>
+<button id="updateImg">Update</button>
+
+<script>
+    $(function(){
+        $("#imageId").change(function(){
+            var id = $("#imageId").val();
+            var url = "/images/"+id;
+            $.ajax({
+                url: url,
+                method: "GET",
+                dataType: "json",
+                success: function (result, textStatus, xhr) {
+                    //console.log("r:"+JSON.stringify(result));
+                    //console.log("ts"+JSON.stringify(textStatus));
+                   // console.log("xhr"+JSON.stringify(xhr));
+                    if (result !== undefined && !result.notfound) {
+                        upload:$("input[name='upload']").val(result.upload);
+                        desc:$("input[name='desc']").val(result.desc);
+                    }else{
+                        upload:$("input[name='upload']").val("");
+                        desc:$("input[name='desc']").val("");
+                    }
+                },
+                error: function (result) {
+                    console.log(result.responseText);
+                }
+            });
+        })
+
+
+        $("#updateImg").click(function(){
+            console.log("button clicked");
+            var image = {
+                id:$("input[name='id']").val(),
+                upload:$("input[name='upload']").val(),
+                desc:$("input[name='desc']").val()
+            };
+            console.log(image);
+            $.ajax({
+                url:"/images/create",
+                method:"POST",
+                data: image,
+                dataType: "json",
+                success:function(result){
+                    console.log(result.responseText);
+                },
+                error: function(result){
+                    console.log(result.responseText);
+                }
+            });
+        });
+    })
+</script>
+
+</body>
+</html>

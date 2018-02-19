@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <meta charset="UTF-8">
+    <title>userForm</title>
+</head>
+<body>
+
+<div id="response"></div>
+
+
+<form action="/user/edit" method="POST" id="userform">
+    username <%= user.username%><br/>
+    <input type="hidden" name="username" value="<%= user.username%>">
+    password<input type="text" name="password" value="<%= user.password%>"><br/>
+    email<input type="email" name="email" value="<%= user.email%>"><br/>
+    <button id="create">create</button>
+
+</form>
+<a href="users.html">see all users</a>
+
+
+</body>
+</html>

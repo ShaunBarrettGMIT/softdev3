@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Car</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<body>
+    <div id="result"></div>
+    ID <input type="text" name="id"/><br/>
+    Make <input type="text" name="make"/><br/>
+    Model <input type="text" name="model"/><br/>
+    <button id="createCar">Create</button>
+
+<script>
+    $(function(){
+        $("#createCar").click(function(){
+            console.log("button clicked");
+            var car = {
+                id:$("input[name='id']").val(),
+                make:$("input[name='make']").val(),
+                model:$("input[name='model']").val()
+            };
+            console.log(car);
+                $.ajax({
+                    url:"/cars/create",
+                    method:"POST",
+                    data: car,
+                    dataType: "json",
+                    success:function(result){
+                        console.log(result.responseText);
+                    },
+                    error: function(result){
+                        console.log(result.responseText);
+                    }
+                });
+        });
+    })
+</script>
+
+</body>
+</html>
